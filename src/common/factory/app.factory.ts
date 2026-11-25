@@ -1,4 +1,5 @@
 import { newAlertService } from "../../modules/alerts/services/alert.service";
+import { newAuthService } from "../../modules/auth/services/auth.service";
 import { newAuditService } from "../../modules/audit/services/audit.service";
 import { newCheckInService } from "../../modules/checkin/services/checkin.service";
 import { newClinicService } from "../../modules/clinic/services/clinic.service";
@@ -15,6 +16,7 @@ import { newRiskService } from "../../modules/risk/services/risk.service";
  * Mongoose models are process-wide, so no database handle needs injecting.
  */
 export const services = {
+  auth: newAuthService(),
   identity: newIdentityService(),
   consent: newConsentService(),
   checkin: newCheckInService(),
