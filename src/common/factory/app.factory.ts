@@ -8,6 +8,7 @@ import { newConsentService } from "../../modules/consent/services/consent.servic
 import { newCrisisService } from "../../modules/crisis/services/crisis.service";
 import { newEventService } from "../../modules/events/services/event.service";
 import { newIdentityService } from "../../modules/identity/services/identity.service";
+import { newOnboardingService } from "../../modules/identity/services/onboarding.service";
 import { newMedicationService } from "../../modules/medication/services/medication.service";
 import { newRiskService } from "../../modules/risk/services/risk.service";
 
@@ -18,6 +19,7 @@ import { newRiskService } from "../../modules/risk/services/risk.service";
 export const services = {
   auth: newAuthService(),
   identity: newIdentityService(),
+  onboarding: newOnboardingService(),
   consent: newConsentService(),
   checkin: newCheckInService(),
   risk: newRiskService(),

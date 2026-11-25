@@ -14,6 +14,7 @@ import { consentRouter } from "../modules/consent/routes/consent.routes";
 import { crisisRouter } from "../modules/crisis/routes/crisis.routes";
 import { eventRouter } from "../modules/events/routes/event.routes";
 import { identityRouter } from "../modules/identity/routes/identity.routes";
+import { onboardingRouter } from "../modules/identity/routes/onboarding.routes";
 import { medicationRouter } from "../modules/medication/routes/medication.routes";
 import { riskRouter } from "../modules/risk/routes/risk.routes";
 import healthRouter from "../routes/health";
@@ -24,6 +25,7 @@ function routes(app: express.Express): void {
   const v1 = Router();
 
   v1.use("/auth", authRouter);
+  v1.use("/onboarding", onboardingRouter);
   v1.use("/identity", identityRouter);
   v1.use("/consent", consentRouter);
   v1.use("/checkins", checkInRouter);
