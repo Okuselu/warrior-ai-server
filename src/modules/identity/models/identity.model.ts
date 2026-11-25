@@ -17,12 +17,15 @@ export interface UserRecord {
   /** OAuth accounts complete this during onboarding; optional until then. */
   phone_e164?: string;
   email?: string;
+  name?: string;
+  /** Present only for credentials accounts; never serialized to clients. */
+  password_hash?: string;
   role: Role;
   language: Language;
   created_at: string;
   last_active_at: string;
   status: UserStatus;
-  oauth_provider?: "google";
+  oauth_provider?: "google" | "credentials";
   oauth_subject?: string;
   onboarding_completed_at?: string;
 }
@@ -45,13 +48,20 @@ export interface PatientProfileRecord {
 const userSchema = new Schema<UserRecord>({
   user_id: { type: String, required: true, unique: true },
   phone_e164: { type: String, unique: true, sparse: true },
-  email: { type: String },
+  email: { type: String, lowercase: true, trim: true },
+  name: { type: String, trim: true },
+  password_hash: { type: String, select: false },
   role: { type: String, enum: [...ROLES], required: true },
   language: { type: String, enum: [...LANGUAGES], required: true },
   created_at: { type: String, required: true },
   last_active_at: { type: String, required: true },
   status: { type: String, enum: [...USER_STATUSES], required: true, default: "active" },
 });
+
+userSchema.index(
+  { oauth_provider: 1, email: 1 },
+  { unique: true, partialFilterExpression: { oauth_provider: "credentials" } }
+);
 
 const patientProfileSchema = new Schema<PatientProfileRecord>({
   patient_id: { type: String, required: true, unique: true },

@@ -24,6 +24,7 @@ export interface UserResponseDTO {
   userId: string;
   phoneE164?: string;
   email?: string;
+  name?: string;
   role: Role;
   language: Language;
   createdAt: string;

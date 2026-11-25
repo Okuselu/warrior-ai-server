@@ -15,6 +15,7 @@ export function toUserResponse(record: UserRecord): UserResponseDTO {
     userId: record.user_id,
     phoneE164: record.phone_e164,
     email: record.email,
+    name: record.name,
     role: record.role,
     language: record.language,
     createdAt: record.created_at,

@@ -10,6 +10,8 @@ Base path: `API_ROUTE` (default `/api/v1`).
 |---|---|---|---|
 | `GET /api/health` | Liveness + DB state | Implemented | No auth, no deep dependency checks |
 | `POST /auth/google` | Verify Google ID token, issue app JWT | Implemented | Public exchange; strict `idToken` DTO, JWKS verification, audience check |
+| `POST /auth/register` | Create email/password account | Implemented | Strict DTO; scrypt hash; duplicate-email conflict check; issues app JWT |
+| `POST /auth/login` | Verify credentials, issue app JWT | Implemented | Strict DTO; constant-time verification; generic failure message |
 | `GET /auth/me` | Resolve authenticated user | Implemented | Bearer auth; context-driven identity |
 | `POST /onboarding/complete` | Create profile, consents, care circle | Implemented | Bearer auth; strict DTO; owner taken from context, never from body |
 | `POST /identity/users` | Register user (F1) | Writes record | **No OTP verification**, no auth |
@@ -57,6 +59,13 @@ The three endpoints above close the first security-foundation slice:
 - **Validation:** all three new endpoints use strict Zod schemas and the central `{ error, errors, data, message, status }` envelope.
 
 Still outstanding: the legacy endpoints in the table above remain unauthenticated/authorization-unsafe until migrated; OTP/MFA, verified-contact gating, consent-text version registry, signed clinic shares, alert delivery, and audit hash-chain/retention are not implemented.
+
+### Addendum — email/password credentials (current work)
+
+- `POST /auth/register` and `POST /auth/login` use strict Zod DTOs and issue the same first-party HS256 token as Google sign-in.
+- Passwords are salted with 16 random bytes and derived with Node `scrypt`; verification is constant-time. `password_hash` is excluded from normal queries and never serialized.
+- Credentials accounts are keyed by `(oauth_provider, email)` with a partial unique index; login failures are intentionally generic so an email address cannot be enumerated.
+- Email verification, password reset, rate limiting, and MFA are still outstanding. This is password authentication for the MVP, not a replacement for OTP/MFA in the PRD.
 
 ### PRD features with no endpoint at all
 OTP request/verify; clinician MFA; care finder directory read (F10); 30-day clinic summary generation and signed link retrieval (F7); "contact my clinic" (F12); red-flag triage path (F4); micro-lessons and translations (F9); moderation actions (remove post / suspend member); research aggregate extracts; account deletion and retention jobs; season alerts (F14).

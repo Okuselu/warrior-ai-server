@@ -5,7 +5,7 @@ import { asyncHandler } from "../../../common/middleware/async.middleware";
 import { getContext } from "../../../common/middleware/request.middleware";
 import { parseBody } from "../../../common/utils/validation.util";
 import { sendResponse } from "../../../common/utils/response.util";
-import { googleAuthSchema } from "../dtos/auth.dto";
+import { googleAuthSchema, loginSchema, registerSchema } from "../dtos/auth.dto";
 
 export const authRouter = Router();
 
@@ -16,6 +16,26 @@ authRouter.post(
     const body = parseBody(googleAuthSchema, req.body);
     const data = await services.auth.googleSignIn(getContext(res), body);
     sendResponse(res, { data, message: "Signed in with Google" });
+  })
+);
+
+/** Public: creates an email/password account with a scrypt-hashed password. */
+authRouter.post(
+  "/register",
+  asyncHandler(async (req, res) => {
+    const body = parseBody(registerSchema, req.body);
+    const data = await services.auth.registerWithPassword(getContext(res), body);
+    sendResponse(res, { data, message: "Account created", status: 201 });
+  })
+);
+
+/** Public: verifies credentials and issues the same first-party token as Google. */
+authRouter.post(
+  "/login",
+  asyncHandler(async (req, res) => {
+    const body = parseBody(loginSchema, req.body);
+    const data = await services.auth.signInWithPassword(getContext(res), body);
+    sendResponse(res, { data, message: "Signed in" });
   })
 );
 

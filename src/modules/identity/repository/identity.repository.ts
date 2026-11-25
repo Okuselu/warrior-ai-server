@@ -23,6 +23,13 @@ export class UserRepository extends BaseRepository<UserRecord> {
     return this.model.findOne({ oauth_provider, oauth_subject }).lean();
   }
 
+  async findByCredentialsEmail(email: string): Promise<UserRecord | null> {
+    return (await this.model
+      .findOne({ oauth_provider: "credentials", email })
+      .select("+password_hash")
+      .lean()) as unknown as UserRecord | null;
+  }
+
   updateByUserId(user_id: string, data: Partial<UserRecord>) {
     return this.model.findOneAndUpdate({ user_id }, data, { new: true }).lean();
   }
